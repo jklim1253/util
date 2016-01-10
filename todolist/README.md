@@ -1,0 +1,30 @@
+I Want It.
+---
+
+- [ ] add new todo
+	- [ ] property
+		- [ ] contents : string, image
+		- [ ] repeat : on/off, period
+		- [ ] date : created, self-destroy
+		- [ ] alarm : on/off, visual, sound, before(1 min/1 hour/1 day/custom)
+		- [ ] check : disappear when done.
+	- [ ] meta-property : priority(0~9)
+		- [ ] frequently changed property must be shown first than other properties.
+- [ ] search todo
+	- [ ] search by date
+	- [ ] search by keyword
+	- [ ] search by category
+- [ ] check todo
+	- [ ] done
+	- [ ] cancel
+	- [ ] pause
+- [ ] delete todo
+	- [ ] to temporary
+	- [ ] to waste
+	- [ ] forever
+- [ ] get todo list
+	- [ ] count of items of todo list.
+	- [ ] top N items of todo list
+- [ ] interface
+	- [ ] dialog way
+	- [ ] response to request
