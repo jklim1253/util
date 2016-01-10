@@ -5,3 +5,6 @@
 *.o
 *.exe
 
+# tiny test file
+tiny/test.txt
+
