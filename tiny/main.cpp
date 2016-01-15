@@ -3,6 +3,7 @@
 #include <string>
 #include <list>
 #include <cctype>
+#include <boost/filesystem.hpp>
 using namespace std;
 
 struct error {
@@ -23,21 +24,31 @@ bool parse_command_line(int& argc, char**& argv) {
 }
 void make_filelist(std::list<std::string>& filelist, int argc, char** argv) {
 	// TODO : get current working directory.
-	std::string path = ".\\";
+	boost::filesystem::path path = boost::filesystem::current_path();
 	while (argc--) {
-		filelist.push_back(path + std::string(*argv++));
+		filelist.push_back(path.string() + "\\" + std::string(*argv++));
 	}
 }
 class checker {
+	std::fstream file;
 public :
-	int check(const string& filename) throw(...) {
-		static const char* const not_found = " not found.";
-		std::fstream file;
-		file.open(filename, std::ios_base::binary | std::ios_base::in | std::ios_base::out);
-		if (!file.good()) {
-			cerr << filename << not_found << endl;
-			return 0;
+	checker(const string& filename) {
+		open(filename);
+	}
+	bool open(const string& filename) {
+		try {
+			file.open(filename, std::ios_base::binary | std::ios_base::in | std::ios_base::out);
+			if (!file.is_open()) {
+				return false;
+			}
 		}
+		catch (...) {
+			throw;
+		}
+
+		return true;
+	}
+	int check() {
 		int count_changed = 0;
 
 		typedef int (checker::*check_detail)(std::fstream&);
@@ -52,7 +63,7 @@ public :
 	}
 	int trailing_whitespace(std::fstream& fs) {
 		static const int size = 1024;
-		std::fstream::pos_type current = 0, wc = 0, prev_wc = 0;
+		std::fstream::pos_type current = 0;//, wc = 0, prev_wc = 0;
 		char buffer[size];
 		while (fs.read(buffer, size)) {
 			// find trailing whitespace.
@@ -79,10 +90,12 @@ int main(int argc, char* argv[]) {
 	list<string> filelist;
 	make_filelist(filelist, argc, argv);
 
-	checker ch;
+	int i = 0;
 	for (auto& filename : filelist) {
-		ch.check(filename);
+		cout << i << " : " << filename << endl;
+		checker ch(filename);
+//		ch.check();
 	}
-	
+
 	return error::exit_normal;
 }

@@ -1,8 +1,8 @@
 TARGET=tiny
 
 CXX=g++
-CXXFLAGS=-g -Wall -std=c++11
-LDFLAGS=
+CXXFLAGS=-g -Wall -std=c++11 -IC:\\MinGW\\boost32\\include\\boost-1_60
+LDFLAGS=-LC:\\MinGW\\boost32\\lib -lboost_filesystem-mgw48-mt-1_60 -lboost_system-mgw48-mt-1_60
 
 .PHONY: default all clean
 
@@ -18,7 +18,7 @@ HEADERS = $(wildcard *.h)
 .PRECIOUS: $(TARGET) $(OBJECTS)
 
 $(TARGET) : $(OBJECTS)
-	$(CXX) $(OBJECTS) -Wall $(LDFLAGS) -o $@
+	$(CXX) $(OBJECTS) -o $@ -Wall $(LDFLAGS)
 
 clean :
 	-rm -f *.o
