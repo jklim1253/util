@@ -12,14 +12,20 @@ int client::connect(const std::string& ip_address, const unsigned short& port) {
 
 		asio::io_service ios;
 
-		asio::ip::tcp::socket sock(ios, ep.protocol());
+		std::shared_ptr<asio::ip::tcp::socket> sock(new asio::ip::tcp::socket(ios, ep.protocol()));
 
-		sock.connect(ep);
+		sock->connect(ep);
 
-		std::cout << sock.local_endpoint().address().to_string() << ":" << sock.local_endpoint().port();
+		std::cout << sock->local_endpoint().address().to_string() << ":" << sock->local_endpoint().port();
 		std::cout << " connected." << std::endl;
 
-		send(sock, "hello, I'm client!");
+		std::string message("Hello");
+		do {
+			send_away(sock, message);
+			std::getline(std::cin, message);
+		} while (message != std::string("quit"));
+
+		ios.run();
 	}
 	catch (system::system_error& e) {
 		std::cout << "Error occured! Error code = " << e.code()
@@ -32,8 +38,22 @@ int client::connect(const std::string& ip_address, const unsigned short& port) {
 }
 int client::send(asio::ip::tcp::socket& sock, const std::string& str) {
 
-	asio::const_buffers_1 buffer = asio::buffer(str);
-	sock.send(buffer);
+	sock.send(asio::buffer(str));
 
 	return 0;
+}
+int client::send_away(std::shared_ptr<asio::ip::tcp::socket>& sock, const std::string& str) {
+
+	std::shared_ptr<session> s(new session());
+	s->sock = sock;
+	s->data = str;
+
+	sock->async_send(asio::buffer(s->data), std::bind(client::handler, std::placeholders::_1, std::placeholders::_2, s));
+
+	return 0;
+}
+void client::handler(system::error_code e, std::size_t transferred, std::shared_ptr<session>& s) {
+
+	std::cout << s->data << "[";
+	std::cout << transferred << "bytes sent]" << std::endl;
 }

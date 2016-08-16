@@ -28,7 +28,16 @@ int server::ready(const unsigned short& port) {
 		std::cout << sock.local_endpoint().address().to_string() << ":" << sock.local_endpoint().port();
 		std::cout << " accepted." << std::endl;
 
-		receive(sock);
+		std::string message;
+		do {
+
+			message = receive(sock);
+
+			std::cout << "> " << message << std::endl;
+
+		} while (message != std::string("quit"));
+
+		sock.close();
 	}
 	catch (system::system_error& e) {
 		std::cout << "Error occured! Error code = " << e.code()
@@ -38,15 +47,10 @@ int server::ready(const unsigned short& port) {
 
 	return 0;
 }
-int server::receive(boost::asio::ip::tcp::socket& sock) {
-	std::vector<char> str(100);
-	asio::mutable_buffers_1 buffer = asio::buffer(str, 100);
+std::string server::receive(boost::asio::ip::tcp::socket& sock) {
+	std::vector<char> message(100);
+	asio::mutable_buffers_1 buffer = asio::buffer(message, 100);
 	size_t readsize = sock.receive(buffer);
 
-	for (size_t i = 0; i < readsize; i++) {
-		std::cout << str[i];
-	}
-	std::cout << std::endl;
-
-	return 0;
+	return std::string(message.begin(), message.begin() + readsize);
 }
