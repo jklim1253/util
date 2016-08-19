@@ -23,18 +23,15 @@ int server::ready(const unsigned short& port) {
 		std::cout << acceptor.local_endpoint().address().to_string() << ":"
 			<< acceptor.local_endpoint().port() << " listen..." << std::endl;
 
-		//do {
-			std::shared_ptr<tcpsocket> sock(new tcpsocket(ios));
+		std::shared_ptr<tcpsocket> sock(new tcpsocket(ios));
 
-			acceptor.accept(*sock);
+		acceptor.accept(*sock);
 
-			std::cout << "request from ";
-			std::cout << sock->remote_endpoint().address().to_string() << ":" << sock->remote_endpoint().port();
-			std::cout << " accepted." << std::endl;
+		std::cout << "request from ";
+		std::cout << sock->remote_endpoint().address().to_string() << ":" << sock->remote_endpoint().port();
+		std::cout << " accepted." << std::endl;
 
-			receive_hidden(sock);
-
-		//} while (true);
+		receive_hidden(sock);
 
 		//std::string message;
 		//do {

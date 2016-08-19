@@ -57,9 +57,9 @@ int client::send_away(std::shared_ptr<tcpsocket>& sock, const std::string& str) 
 	s->data.append(str);
 	s->length = s->data.length();
 
-	s->sock->async_send(asio::buffer((char*)&s->length, sizeof(std::size_t)),
+	asio::async_write(*(s->sock), asio::buffer((char*)&s->length, sizeof(std::size_t)),
 		std::bind(client::handler, std::placeholders::_1, std::placeholders::_2, s));
-	s->sock->async_send(asio::buffer(s->data.c_str(), s->length), 
+	asio::async_write(*(s->sock), asio::buffer(s->data.c_str(), s->length), 
 		std::bind(client::handler, std::placeholders::_1, std::placeholders::_2, s));
 
 	std::cout << "send away end" << std::endl;
